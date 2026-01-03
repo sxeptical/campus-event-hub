@@ -20,7 +20,7 @@ const LoginPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
@@ -37,8 +37,30 @@ const LoginPage = () => {
       return;
     }
 
-    console.log('Login successful:', formData);
-    navigate('/dashboard');
+    try {
+      // Query the users endpoint to find user by email
+      const response = await fetch(`http://localhost:5050/users?email=${formData.email}`);
+      
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+      
+      const users = await response.json();
+      
+      // Check if user exists and password matches
+      if (users.length === 0 || users[0].password !== formData.password) {
+        setErrors({ email: 'Invalid email or password' });
+        return;
+      }
+      
+      // Store user in localStorage
+      localStorage.setItem('user', JSON.stringify(users[0]));
+      console.log('Login successful:', users[0]);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrors({ email: 'An error occurred. Please try again.' });
+    }
   };
 
   return (

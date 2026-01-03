@@ -1,25 +1,84 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router';
 
 const DashboardPage = () => {
-  // Sample registered events data
-  const [registeredEvents, setRegisteredEvents] = useState([
-    {
-      id: 1,
-      title: 'Beach cleanup',
-      date: '2 Dec 2025',
-      location: 'East Coast Park',
-      image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop'
-    }
-  ]);
-
+  const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [eventHistory] = useState([]);
 
-  const handleUnregister = (eventId) => {
-    setRegisteredEvents(prev => prev.filter(event => event.id !== eventId));
+  useEffect(() => {
+    fetchRegistrations();
+  }, []);
+
+  const fetchRegistrations = async () => {
+    try {
+      const userString = localStorage.getItem('user');
+      if (!userString) {
+        setLoading(false);
+        return;
+      }
+      
+      const user = JSON.parse(userString);
+      const response = await fetch(`http://localhost:5050/registrations?userId=${user.id}`);
+      const registrations = await response.json();
+      
+      // Map registrations to event format for display
+      const events = registrations.map(reg => ({
+        id: reg.id,
+        eventId: reg.eventId,
+        title: reg.eventTitle,
+        date: reg.eventDate,
+        location: reg.eventLocation,
+        image: reg.eventImage
+      }));
+      
+      setRegisteredEvents(events);
+    } catch (error) {
+      console.error('Error fetching registrations:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUnregister = async (registrationId, eventId, eventTitle) => {
+    // Show confirmation dialog
+    const confirmed = window.confirm(`Are you sure you want to unregister from "${eventTitle}"?`);
+    
+    if (!confirmed) return;
+    
+    try {
+      // Delete registration
+      await fetch(`http://localhost:5050/registrations/${registrationId}`, {
+        method: 'DELETE',
+      });
+      
+      // Optionally restore event slot
+      const eventResponse = await fetch(`http://localhost:5050/events/${eventId}`);
+      const event = await eventResponse.json();
+      
+      await fetch(`http://localhost:5050/events/${eventId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ slotsAvailable: event.slotsAvailable + 1 }),
+      });
+      
+      setRegisteredEvents(prev => prev.filter(event => event.id !== registrationId));
+      
+      // Update notifications
+      window.dispatchEvent(new CustomEvent('newRegistration'));
+    } catch (error) {
+      console.error('Error unregistering:', error);
+      alert('Failed to unregister. Please try again.');
+    }
   };
 
   const nextEvent = registeredEvents.length > 0 ? registeredEvents[0] : null;
+
+  if (loading) {
+    return <div className="dashboard-layout"><p>Loading...</p></div>;
+  }
 
   return (
     <div className="dashboard-layout">
@@ -60,7 +119,7 @@ const DashboardPage = () => {
                       </div>
                       <button 
                         className="unregister-btn"
-                        onClick={() => handleUnregister(event.id)}
+                        onClick={() => handleUnregister(event.id, event.eventId, event.title)}
                       >
                         Unregister
                       </button>

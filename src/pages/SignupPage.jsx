@@ -22,7 +22,7 @@ const SignupPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
@@ -47,8 +47,53 @@ const SignupPage = () => {
       return;
     }
 
-    console.log('Signup successful:', formData);
-    navigate('/login');
+    try {
+      // Check if email already exists
+      const checkResponse = await fetch(`http://localhost:5050/users?email=${formData.email}`);
+      const existingUsers = await checkResponse.json();
+      
+      if (existingUsers.length > 0) {
+        setErrors({ email: 'Email already registered' });
+        return;
+      }
+      
+      // Create new user
+      const newUser = {
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        name: formData.email.split('@')[0], // Default name from email
+        studentId: '',
+        school: '',
+        year: '1',
+        phone: '',
+        bio: ''
+      };
+      
+      const response = await fetch('http://localhost:5050/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newUser),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Signup failed');
+      }
+      
+      // Get the created user with ID from server response
+      const createdUser = await response.json();
+      
+      // Auto-login: store user in localStorage
+      localStorage.setItem('user', JSON.stringify(createdUser));
+      
+      console.log('Signup successful:', createdUser);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Signup error:', error);
+      setErrors({ email: 'An error occurred. Please try again.' });
+    }
   };
 
   return (
