@@ -5,7 +5,7 @@ import { formatDate, getUser } from '../utils';
 const DashboardPage = () => {
   const [registeredEvents, setRegisteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [eventHistory] = useState([]);
+  const [eventHistory, setEventHistory] = useState([]);
   
   const user = getUser();
   const isOrganiser = user?.role === 'Organiser';
@@ -36,10 +36,21 @@ const DashboardPage = () => {
         image: reg.eventImage
       }));
       
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const todayString = `${year}-${month}-${day}`;
+
+      const upcoming = events.filter(event => event.date >= todayString);
+      const past = events.filter(event => event.date < todayString);
+
       // Sort events by date (earliest first)
-      events.sort((a, b) => new Date(a.date) - new Date(b.date));
+      upcoming.sort((a, b) => new Date(a.date) - new Date(b.date));
+      past.sort((a, b) => new Date(b.date) - new Date(a.date));
       
-      setRegisteredEvents(events);
+      setRegisteredEvents(upcoming);
+      setEventHistory(past);
     } catch (error) {
       console.error('Error fetching registrations:', error);
     } finally {
@@ -89,61 +100,61 @@ const DashboardPage = () => {
 
   return (
     <div className="dashboard-layout">
-      {/* Sidebar */}
-      <aside className="dashboard-sidebar">
-        <nav className="sidebar-nav">
-          <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-            Dashboard
-          </NavLink>
-          {isOrganiser && (
-            <NavLink to="/manage-events" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-              Manage Events
+     {/* Sidebar */}
+        <aside className="dashboard-sidebar">
+          <nav className="sidebar-nav">
+            <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+          Dashboard
             </NavLink>
-          )}
-          <NavLink to="/profile" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-            Profile
+            {isOrganiser && (
+          <NavLink to="/manage-events" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+            Manage Events
           </NavLink>
-          <NavLink to="/settings" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-            Settings
-          </NavLink>
-        </nav>
-      </aside>
+            )}
+            <NavLink to="/profile" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+          Profile
+            </NavLink>
+            <NavLink to="/settings" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+          Settings
+            </NavLink>
+          </nav>
+        </aside>
 
-      {/* Main Content */}
-      <main className="dashboard-main">
-        <div className="dashboard-content">
-          {/* Top Section */}
-          <div className="dashboard-top-section">
-            {/* Upcoming Events */}
-            <div className="upcoming-events-section">
-              <h2 className="section-title">Upcoming events:</h2>
-              <div className="upcoming-events-list">
-                {registeredEvents.length > 0 ? (
-                  registeredEvents.map(event => (
-                    <div key={event.id} className="registered-event-card">
-                      <div className="registered-event-image">
-                        <img src={event.image} alt={event.title} />
-                      </div>
-                      <div className="registered-event-details">
-                        <h3 className="registered-event-title">{event.title}</h3>
-                        <p className="registered-event-date">{formatDate(event.date)}</p>
-                        <p className="registered-event-location">{event.location}</p>
-                      </div>
-                      <button 
-                        className="unregister-btn"
-                        onClick={() => handleUnregister(event.id, event.eventId, event.title)}
-                      >
-                        Unregister
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <p className="no-events-text">No upcoming events</p>
-                )}
+        {/* Main Content */}
+        <main className="dashboard-main">
+          <div className="dashboard-content">
+            {/* Top Section */}
+            <div className="dashboard-top-section">
+          {/* Upcoming Events */}
+          <div className="upcoming-events-section">
+            <h2 className="section-title">Upcoming events:</h2>
+            <div className="upcoming-events-list">
+              {registeredEvents.length > 0 ? (
+            registeredEvents.slice(0, 3).map(event => (
+              <div key={event.id} className="registered-event-card">
+                <div className="registered-event-image">
+              <img src={event.image} alt={event.title} />
+                </div>
+                <div className="registered-event-details">
+              <h3 className="registered-event-title">{event.title}</h3>
+              <p className="registered-event-date">{formatDate(event.date)}</p>
+              <p className="registered-event-location">{event.location}</p>
+                </div>
+                <button 
+              className="unregister-btn"
+              onClick={() => handleUnregister(event.id, event.eventId, event.title)}
+                >
+              Unregister
+                </button>
               </div>
+            ))
+              ) : (
+            <p className="no-events-text">No upcoming events</p>
+              )}
             </div>
+          </div>
 
-            {/* Next Event */}
+          {/* Next Event */}
             <div className="next-event-section">
               <h2 className="section-title">Next event:</h2>
               <div className="next-event-card">
@@ -166,7 +177,14 @@ const DashboardPage = () => {
               {eventHistory.length > 0 ? (
                 eventHistory.map(event => (
                   <div key={event.id} className="history-event-card">
-                    <p>{event.title}</p>
+                    <div className="history-event-image">
+                      <img src={event.image} alt={event.title} />
+                    </div>
+                    <div className="history-event-details">
+                      <h3 className="history-event-title">{event.title}</h3>
+                      <p className="history-event-date">{formatDate(event.date)}</p>
+                      <p className="history-event-location">{event.location}</p>
+                    </div>
                   </div>
                 ))
               ) : (

@@ -4,6 +4,11 @@ import { formatDate } from '../utils';
 const EventCard = ({ event, onClose, onRegistered }) => {
   const [isApplying, setIsApplying] = useState(false);
 
+  const eventDate = new Date(event.date);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const isPastEvent = eventDate < now;
+
   const handleApply = async () => {
     setIsApplying(true);
     
@@ -103,9 +108,9 @@ const EventCard = ({ event, onClose, onRegistered }) => {
             <button 
               className="event-apply-btn" 
               onClick={handleApply}
-              disabled={isApplying || event.slotsAvailable === 0}
+              disabled={isApplying || event.slotsAvailable === 0 || isPastEvent}
             >
-              {isApplying ? 'Applying...' : 'Apply'}
+              {isApplying ? 'Applying...' : isPastEvent ? 'Event Ended' : event.slotsAvailable === 0 ? 'Full' : 'Apply'}
             </button>
           </div>
         </div>

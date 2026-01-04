@@ -31,7 +31,7 @@ const ManageEventsPage = () => {
       // Filter events to only show those created by the current user
       const userEvents = data.filter(event => 
         event.createdBy === user?.id || event.organiser === user?.name
-      );
+      ).reverse();
       setEvents(userEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -271,6 +271,7 @@ const ManageEventsPage = () => {
                     type="number"
                     name="slotsAvailable"
                     min="0"
+                    max="500"
                     value={editForm.slotsAvailable}
                     onChange={handleChange}
                     required
@@ -282,6 +283,7 @@ const ManageEventsPage = () => {
                     type="number"
                     name="totalSlots"
                     min="0"
+                    max="500"
                     value={editForm.totalSlots}
                     onChange={handleChange}
                     required

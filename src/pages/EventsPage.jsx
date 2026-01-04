@@ -44,7 +44,7 @@ const EventsPage = () => {
       event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.description.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+    .reverse();
 
   const handleAddEvent = async (e) => {
     e.preventDefault();

@@ -32,8 +32,14 @@ const SignupPage = () => {
 
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one uppercase letter';
+    } else if (!/\d/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one number';
+    } else if (!/[!@#$%^&*]/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one special character (!@#$%^&*)';
     }
 
     if (!formData.confirmPassword) {
@@ -85,7 +91,7 @@ const SignupPage = () => {
       // Get the created user with ID from server response
       const createdUser = await response.json();
       
-      // Auto-login: store user in localStorage
+      // Store user in localStorage
       localStorage.setItem('user', JSON.stringify(createdUser));
       
       console.log('Signup successful:', createdUser);
