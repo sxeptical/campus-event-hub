@@ -24,24 +24,6 @@
   margin-bottom: 2rem;
 }
 
-.auth-logo {
-  width: 60px;
-  height: 60px;
-  margin: 0 auto 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-}
-
-.auth-logo svg {
-  width: 32px;
-  height: 32px;
-  color: white;
-}
-
 .auth-brand-name {
   color: white;
   font-size: 1.75rem;
@@ -623,10 +605,6 @@
   height: 1rem;
 }
 
-.events-placeholder {
-  color: #4b5563;
-}
-
 /* Dashboard Page Styles */
 .dashboard-layout {
   display: flex;
@@ -927,12 +905,6 @@
   gap: 1.25rem;
 }
 
-.profile-info-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
 .profile-info-item {
   display: flex;
   flex-direction: column;
@@ -954,12 +926,6 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-}
-
-.profile-form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
 }
 
 .profile-form-group {
