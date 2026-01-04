@@ -3,6 +3,7 @@ import NavBar from './components/NavBar';
 import ProtectedRoute from './components/ProtectedRoute';
 import EventsPage from './pages/EventsPage';
 import DashboardPage from './pages/DashboardPage';
+import ManageEventsPage from './pages/ManageEventsPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 import SignupPage from './pages/SignupPage';
@@ -23,6 +24,7 @@ function AppContent() {
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/manage-events" element={<ManageEventsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/events" element={<EventsPage />} />

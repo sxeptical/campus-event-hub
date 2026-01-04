@@ -13,3 +13,16 @@ export const isLoggedin = () => {
 
     return user !== null;
 }
+
+// Format date to "2 Dec 2025 (Tuesday)" format
+export const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleDateString('en-US', { month: 'short' });
+    const year = date.getFullYear();
+    const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+    
+    return `${day} ${month} ${year} (${weekday})`;
+}

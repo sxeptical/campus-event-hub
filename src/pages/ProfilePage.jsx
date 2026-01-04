@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router';
+import { getUser } from '../utils';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const user = getUser();
+  const isOrganiser = user?.role === 'Organiser';
   const [profile, setProfile] = useState({
     name: '',
     email: '',
-    studentId: '',
     school: '',
     year: '',
-    phone: '',
-    bio: ''
+    phone: ''
   });
 
   const [editedProfile, setEditedProfile] = useState({ ...profile });
@@ -111,6 +112,11 @@ return (
                 <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
                     Dashboard
                 </NavLink>
+                {isOrganiser && (
+                    <NavLink to="/manage-events" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+                        Manage Events
+                    </NavLink>
+                )}
                 <NavLink to="/profile" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
                     Profile
                 </NavLink>
@@ -170,32 +176,18 @@ return (
                                     />
                                 </div>
 
-                                <div className="profile-form-row">
-                                    <div className="profile-form-group">
-                                        <label>Student ID</label>
-                                        <input
-                                            type="text"
-                                            name="studentId"
-                                            value={editedProfile.studentId}
-                                            onChange={handleChange}
-                                            className="profile-input"
-                                            disabled
-                                        />
-                                    </div>
-
-                                    <div className="profile-form-group">
-                                        <label>Year of Study</label>
-                                        <select
-                                            name="year"
-                                            value={editedProfile.year}
-                                            onChange={handleChange}
-                                            className="profile-select"
-                                        >
-                                            <option value="1">Year 1</option>
-                                            <option value="2">Year 2</option>
-                                            <option value="3">Year 3</option>
-                                        </select>
-                                    </div>
+                                <div className="profile-form-group">
+                                    <label>Year of Study</label>
+                                    <select
+                                        name="year"
+                                        value={editedProfile.year}
+                                        onChange={handleChange}
+                                        className="profile-select"
+                                    >
+                                        <option value="1">Year 1</option>
+                                        <option value="2">Year 2</option>
+                                        <option value="3">Year 3</option>
+                                    </select>
                                 </div>
 
                                 <div className="profile-form-group">
@@ -220,17 +212,6 @@ return (
                                     />
                                 </div>
 
-                                <div className="profile-form-group">
-                                    <label>Bio</label>
-                                    <textarea
-                                        name="bio"
-                                        value={editedProfile.bio}
-                                        onChange={handleChange}
-                                        className="profile-textarea"
-                                        rows="3"
-                                    />
-                                </div>
-
                                 <div className="profile-form-actions">
                                     <button type="button" className="cancel-btn" onClick={handleCancel}>
                                         Cancel
@@ -252,16 +233,9 @@ return (
                                     <span className="info-value">{profile.email || '-'}</span>
                                 </div>
 
-                                <div className="profile-info-row">
-                                    <div className="profile-info-item">
-                                        <span className="info-label">Student ID</span>
-                                        <span className="info-value">{profile.studentId || '-'}</span>
-                                    </div>
-
-                                    <div className="profile-info-item">
-                                        <span className="info-label">Year of Study</span>
-                                        <span className="info-value">{profile.year ? `Year ${profile.year}` : '-'}</span>
-                                    </div>
+                                <div className="profile-info-item">
+                                    <span className="info-label">Year of Study</span>
+                                    <span className="info-value">{profile.year ? `Year ${profile.year}` : '-'}</span>
                                 </div>
 
                                 <div className="profile-info-item">
@@ -272,11 +246,6 @@ return (
                                 <div className="profile-info-item">
                                     <span className="info-label">Phone Number</span>
                                     <span className="info-value">{profile.phone || '-'}</span>
-                                </div>
-
-                                <div className="profile-info-item">
-                                    <span className="info-label">Bio</span>
-                                    <span className="info-value">{profile.bio || '-'}</span>
                                 </div>
                             </div>
                         )}

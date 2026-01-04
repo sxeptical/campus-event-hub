@@ -39,10 +39,12 @@ const EventsPage = () => {
     fetchEvents();
   }, []);
 
-  const filteredEvents = events.filter(event =>
-    event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    event.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredEvents = events
+    .filter(event =>
+      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.description.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const handleAddEvent = async (e) => {
     e.preventDefault();
@@ -54,6 +56,7 @@ const EventsPage = () => {
         },
         body: JSON.stringify({
           ...newEvent,
+          createdBy: user?.id,
           slotsAvailable: parseInt(newEvent.slotsAvailable),
           totalSlots: parseInt(newEvent.totalSlots)
         }),
@@ -182,9 +185,9 @@ const EventsPage = () => {
                 <label>Image URL</label>
                 <input
                   type="url"
+                  placeholder="https://example.com/image.jpg"
                   value={newEvent.image}
                   onChange={(e) => setNewEvent({...newEvent, image: e.target.value})}
-                  required
                 />
               </div>
               <div className="form-row">
@@ -192,6 +195,7 @@ const EventsPage = () => {
                   <label>Available Slots</label>
                   <input
                     type="number"
+                    min="0"
                     value={newEvent.slotsAvailable}
                     onChange={(e) => setNewEvent({...newEvent, slotsAvailable: e.target.value})}
                     required
@@ -201,6 +205,7 @@ const EventsPage = () => {
                   <label>Total Slots</label>
                   <input
                     type="number"
+                    min="0"
                     value={newEvent.totalSlots}
                     onChange={(e) => setNewEvent({...newEvent, totalSlots: e.target.value})}
                     required
@@ -220,9 +225,11 @@ const EventsPage = () => {
             className="event-preview-card"
             onClick={() => setSelectedEvent(event)}
           >
-            <div className="event-preview-image">
-              <img src={event.image} alt={event.title} />
-            </div>
+            {event.image && (
+              <div className="event-preview-image">
+                <img src={event.image} alt={event.title} />
+              </div>
+            )}
             <div className="event-preview-content">
               <h3 className="event-preview-title">{event.title}</h3>
               <p className="event-preview-description">{event.description}</p>

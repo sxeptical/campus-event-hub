@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router';
+import { formatDate, getUser } from '../utils';
 
 const DashboardPage = () => {
   const [registeredEvents, setRegisteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [eventHistory] = useState([]);
+  
+  const user = getUser();
+  const isOrganiser = user?.role === 'Organiser';
 
   useEffect(() => {
     fetchRegistrations();
@@ -31,6 +35,9 @@ const DashboardPage = () => {
         location: reg.eventLocation,
         image: reg.eventImage
       }));
+      
+      // Sort events by date (earliest first)
+      events.sort((a, b) => new Date(a.date) - new Date(b.date));
       
       setRegisteredEvents(events);
     } catch (error) {
@@ -88,6 +95,11 @@ const DashboardPage = () => {
           <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
             Dashboard
           </NavLink>
+          {isOrganiser && (
+            <NavLink to="/manage-events" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+              Manage Events
+            </NavLink>
+          )}
           <NavLink to="/profile" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
             Profile
           </NavLink>
@@ -114,7 +126,7 @@ const DashboardPage = () => {
                       </div>
                       <div className="registered-event-details">
                         <h3 className="registered-event-title">{event.title}</h3>
-                        <p className="registered-event-date">{event.date}</p>
+                        <p className="registered-event-date">{formatDate(event.date)}</p>
                         <p className="registered-event-location">{event.location}</p>
                       </div>
                       <button 
@@ -138,7 +150,7 @@ const DashboardPage = () => {
                 {nextEvent ? (
                   <>
                     <p className="next-event-title">{nextEvent.title}</p>
-                    <p className="next-event-date">{nextEvent.date}</p>
+                    <p className="next-event-date">{formatDate(nextEvent.date)}</p>
                   </>
                 ) : (
                   <p className="no-events-text">No upcoming events</p>

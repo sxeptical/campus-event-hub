@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { formatDate } from '../utils';
 
 const EventCard = ({ event, onClose, onRegistered }) => {
   const [isApplying, setIsApplying] = useState(false);
@@ -89,7 +90,7 @@ const EventCard = ({ event, onClose, onRegistered }) => {
             <p className="event-modal-description">{event.description}</p>
             
             <div className="event-modal-info">
-              <p><strong>Date:</strong> {event.date}</p>
+              <p><strong>Date:</strong> {formatDate(event.date)}</p>
               <p><strong>Time:</strong> {event.time}</p>
               <p><strong>Location:</strong> {event.location}</p>
               <p><strong>Organiser:</strong> {event.organiser}</p>

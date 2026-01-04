@@ -1,7 +1,10 @@
 import { NavLink, useNavigate } from 'react-router';
+import { getUser } from '../utils';
 
 const SettingsPage = () => {
   const navigate = useNavigate();
+  const user = getUser();
+  const isOrganiser = user?.role === 'Organiser';
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -16,6 +19,11 @@ const SettingsPage = () => {
           <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
             Dashboard
           </NavLink>
+          {isOrganiser && (
+            <NavLink to="/manage-events" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+              Manage Events
+            </NavLink>
+          )}
           <NavLink to="/profile" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
             Profile
           </NavLink>

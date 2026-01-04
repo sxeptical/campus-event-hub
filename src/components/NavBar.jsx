@@ -1,5 +1,6 @@
 import { NavLink, Link } from "react-router";
 import { useState, useEffect, useRef } from "react";
+import { formatDate } from '../utils';
 
 function NavBar() {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -25,8 +26,19 @@ function NavBar() {
         const notifs = registrations.map(reg => ({
           id: reg.id,
           message: `You're registered for ${reg.eventTitle}`,
-          date: reg.eventDate
+          date: reg.eventDate,
+          registeredAt: reg.registeredAt
         }));
+        
+        // Sort by registeredAt (latest first), fallback to id if no timestamp
+        notifs.sort((a, b) => {
+          if (a.registeredAt && b.registeredAt) {
+            return new Date(b.registeredAt) - new Date(a.registeredAt);
+          }
+          // Fallback to id (higher id = newer registration)
+          return b.id - a.id;
+        });
+        
         setNotifications(notifs);
         
         // Check how many are unread
@@ -123,7 +135,7 @@ function NavBar() {
                   notifications.map(notif => (
                     <div key={notif.id} className="notification-item">
                       <p className="notification-message">{notif.message}</p>
-                      <span className="notification-date">{notif.date}</span>
+                      <span className="notification-date">{formatDate(notif.date)}</span>
                     </div>
                   ))
                 ) : (
