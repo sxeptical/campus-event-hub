@@ -19,6 +19,7 @@ const EventsPage = () => {
     slotsAvailable: 0,
     totalSlots: 0,
   });
+  const [validationError, setValidationError] = useState("");
 
   const user = getUser();
   const isOrganiser = user?.role === "Organiser";
@@ -49,6 +50,21 @@ const EventsPage = () => {
 
   const handleAddEvent = async (e) => {
     e.preventDefault();
+    setValidationError("");
+
+    const slotsAvailable = parseInt(newEvent.slotsAvailable);
+    const totalSlots = parseInt(newEvent.totalSlots);
+
+    if (totalSlots > 500) {
+      setValidationError("Total slots cannot exceed 500");
+      return;
+    }
+
+    if (slotsAvailable > totalSlots) {
+      setValidationError("Available slots cannot be more than total slots");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:5050/events", {
         method: "POST",
@@ -243,6 +259,14 @@ const EventsPage = () => {
                   />
                 </div>
               </div>
+              {validationError && (
+                <div
+                  className="validation-error"
+                  style={{ color: "red", marginBottom: "10px" }}
+                >
+                  {validationError}
+                </div>
+              )}
               <button type="submit" className="submit-event-btn">
                 Create Event
               </button>

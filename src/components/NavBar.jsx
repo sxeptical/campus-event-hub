@@ -27,7 +27,7 @@ function NavBar() {
 
         // Create notifications from registrations
         const notifs = registrations.map((reg) => ({
-          id: reg.id,
+          id: reg._id || reg.id,
           message: `You're registered for ${reg.eventTitle}`,
           date: reg.eventDate,
           registeredAt: reg.registeredAt,

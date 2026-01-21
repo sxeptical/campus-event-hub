@@ -31,7 +31,7 @@ const DashboardPage = () => {
 
       // Map registrations to event format for display
       const events = registrations.map((reg) => ({
-        id: reg.id,
+        id: reg._id || reg.id,
         eventId: reg.eventId,
         title: reg.eventTitle,
         date: reg.eventDate,
@@ -73,20 +73,6 @@ const DashboardPage = () => {
       // Delete registration
       await fetch(`http://localhost:5050/registrations/${registrationId}`, {
         method: "DELETE",
-      });
-
-      // Optionally restore event slot
-      const eventResponse = await fetch(
-        `http://localhost:5050/events/${eventId}`,
-      );
-      const event = await eventResponse.json();
-
-      await fetch(`http://localhost:5050/events/${eventId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ slotsAvailable: event.slotsAvailable + 1 }),
       });
 
       setRegisteredEvents((prev) =>
@@ -166,7 +152,9 @@ const DashboardPage = () => {
                   registeredEvents.slice(0, 3).map((event) => (
                     <div key={event.id} className="registered-event-card">
                       <div className="registered-event-image">
-                        <img src={event.image} alt={event.title} />
+                        {event.image && (
+                          <img src={event.image} alt={event.title} />
+                        )}
                       </div>
                       <div className="registered-event-details">
                         <h3 className="registered-event-title">
@@ -221,7 +209,9 @@ const DashboardPage = () => {
                 eventHistory.map((event) => (
                   <div key={event.id} className="history-event-card">
                     <div className="history-event-image">
-                      <img src={event.image} alt={event.title} />
+                      {event.image && (
+                        <img src={event.image} alt={event.title} />
+                      )}
                     </div>
                     <div className="history-event-details">
                       <h3 className="history-event-title">{event.title}</h3>

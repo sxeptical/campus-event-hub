@@ -58,7 +58,6 @@ const EventCard = ({ event, onClose, onRegistered }) => {
         throw new Error(errorData.message || "Registration failed");
       }
 
-      // Dispatch event to update notifications
       window.dispatchEvent(new CustomEvent("newRegistration"));
 
       alert("Successfully applied to " + event.title + "!");
@@ -80,9 +79,11 @@ const EventCard = ({ event, onClose, onRegistered }) => {
         </button>
 
         <div className="event-modal-content">
-          <div className="event-modal-image">
-            <img src={event.image} alt={event.title} />
-          </div>
+          {event.image && (
+            <div className="event-modal-image">
+              <img src={event.image} alt={event.title} />
+            </div>
+          )}
 
           <div className="event-modal-details">
             <h2 className="event-modal-title">{event.title}</h2>

@@ -17,6 +17,7 @@ const ManageEventsPage = () => {
     slotsAvailable: 0,
     totalSlots: 0,
   });
+  const [validationError, setValidationError] = useState("");
 
   const user = getUser();
 
@@ -40,11 +41,12 @@ const ManageEventsPage = () => {
   };
 
   const handleEdit = (event) => {
+    setValidationError("");
     setEditingEvent(event);
     setEditForm({
       title: event.title,
       description: event.description,
-      date: event.date,
+      date: event.date ? new Date(event.date).toISOString().split("T")[0] : "",
       time: event.time,
       location: event.location,
       organiser: event.organiser,
@@ -57,7 +59,7 @@ const ManageEventsPage = () => {
   const handleSave = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5050/events/${editingEvent.id}`,
+        `http://localhost:5050/events/${editingEvent._id || editingEvent.id}`,
         {
           method: "PUT",
           headers: {
@@ -96,17 +98,6 @@ const ManageEventsPage = () => {
       await fetch(`http://localhost:5050/events/${eventId}`, {
         method: "DELETE",
       });
-
-      const regResponse = await fetch(
-        `http://localhost:5050/registrations?eventId=${eventId}`,
-      );
-      const registrations = await regResponse.json();
-
-      for (const reg of registrations) {
-        await fetch(`http://localhost:5050/registrations/${reg.id}`, {
-          method: "DELETE",
-        });
-      }
 
       setEvents(events.filter((e) => e._id !== eventId));
       alert("Event deleted successfully");
@@ -337,6 +328,14 @@ const ManageEventsPage = () => {
                   />
                 </div>
               </div>
+              {validationError && (
+                <div
+                  className="validation-error"
+                  style={{ color: "red", marginBottom: "10px" }}
+                >
+                  {validationError}
+                </div>
+              )}
               <div className="form-actions">
                 <button
                   type="button"
