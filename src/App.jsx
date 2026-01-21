@@ -1,19 +1,26 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router';
-import NavBar from './components/NavBar';
-import ProtectedRoute from './components/ProtectedRoute';
-import OrganizerRoute from './components/OrganizerRoute';
-import EventsPage from './pages/EventsPage';
-import DashboardPage from './pages/DashboardPage';
-import ManageEventsPage from './pages/ManageEventsPage';
-import ProfilePage from './pages/ProfilePage';
-import SettingsPage from './pages/SettingsPage';
-import SignupPage from './pages/SignupPage';
-import LoginPage from './pages/LoginPage';
-import './App.css'; 
+import {
+  HashRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router";
+import NavBar from "./components/NavBar";
+import ProtectedRoute from "./components/ProtectedRoute";
+import OrganizerRoute from "./components/OrganizerRoute";
+import EventsPage from "./pages/EventsPage";
+import DashboardPage from "./pages/DashboardPage";
+import ManageEventsPage from "./pages/ManageEventsPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
+import SignupPage from "./pages/SignupPage";
+import LoginPage from "./pages/LoginPage";
+import "./App.css";
 
 function AppContent() {
   const location = useLocation();
-  const hideNavbar = location.pathname === '/login' || location.pathname === '/signup';
+  const hideNavbar =
+    location.pathname === "/login" || location.pathname === "/signup";
 
   return (
     <>
