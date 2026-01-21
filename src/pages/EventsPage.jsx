@@ -1,36 +1,36 @@
-import { useState, useEffect } from 'react';
-import EventCard from '../components/EventCard';
-import { getUser } from '../utils';
+import { useState, useEffect } from "react";
+import EventCard from "../components/EventCard";
+import { getUser } from "../utils";
 
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newEvent, setNewEvent] = useState({
-    title: '',
-    description: '',
-    date: '',
-    time: '',
-    location: '',
-    organiser: '',
-    image: '',
+    title: "",
+    description: "",
+    date: "",
+    time: "",
+    location: "",
+    organiser: "",
+    image: "",
     slotsAvailable: 0,
-    totalSlots: 0
+    totalSlots: 0,
   });
 
   const user = getUser();
-  const isOrganiser = user?.role === 'Organiser';
+  const isOrganiser = user?.role === "Organiser";
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('http://localhost:5050/events');
+        const response = await fetch("http://localhost:5050/events");
         const data = await response.json();
         setEvents(data);
       } catch (error) {
-        console.error('Error fetching events:', error);
+        console.error("Error fetching events:", error);
       } finally {
         setLoading(false);
       }
@@ -40,51 +40,56 @@ const EventsPage = () => {
   }, []);
 
   const filteredEvents = events
-    .filter(event =>
-      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter(
+      (event) =>
+        event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     .reverse();
 
   const handleAddEvent = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5050/events', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5050/events", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...newEvent,
-          createdBy: user?.id,
+          createdBy: user?._id || user?.id,
           slotsAvailable: parseInt(newEvent.slotsAvailable),
-          totalSlots: parseInt(newEvent.totalSlots)
+          totalSlots: parseInt(newEvent.totalSlots),
         }),
       });
-      
+
       if (response.ok) {
         const createdEvent = await response.json();
         setEvents([...events, createdEvent]);
         setShowAddForm(false);
         setNewEvent({
-          title: '',
-          description: '',
-          date: '',
-          time: '',
-          location: '',
-          organiser: '',
-          image: '',
+          title: "",
+          description: "",
+          date: "",
+          time: "",
+          location: "",
+          organiser: "",
+          image: "",
           slotsAvailable: 0,
-          totalSlots: 0
+          totalSlots: 0,
         });
       }
     } catch (error) {
-      console.error('Error adding event:', error);
+      console.error("Error adding event:", error);
     }
   };
 
   if (loading) {
-    return <div className="events-container"><p>Loading events...</p></div>;
+    return (
+      <div className="events-container">
+        <p>Loading events...</p>
+      </div>
+    );
   }
 
   return (
@@ -93,7 +98,7 @@ const EventsPage = () => {
         <h2 className="events-title">Recents</h2>
         <div className="events-header-right">
           {isOrganiser && (
-            <button 
+            <button
               className="add-event-btn"
               onClick={() => setShowAddForm(true)}
             >
@@ -122,7 +127,12 @@ const EventsPage = () => {
           <div className="add-event-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Add New Event</h3>
-              <button className="modal-close" onClick={() => setShowAddForm(false)}>×</button>
+              <button
+                className="modal-close"
+                onClick={() => setShowAddForm(false)}
+              >
+                ×
+              </button>
             </div>
             <form onSubmit={handleAddEvent} className="add-event-form">
               <div className="form-group">
@@ -130,7 +140,9 @@ const EventsPage = () => {
                 <input
                   type="text"
                   value={newEvent.title}
-                  onChange={(e) => setNewEvent({...newEvent, title: e.target.value})}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, title: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -138,7 +150,9 @@ const EventsPage = () => {
                 <label>Description</label>
                 <textarea
                   value={newEvent.description}
-                  onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, description: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -148,7 +162,9 @@ const EventsPage = () => {
                   <input
                     type="date"
                     value={newEvent.date}
-                    onChange={(e) => setNewEvent({...newEvent, date: e.target.value})}
+                    onChange={(e) =>
+                      setNewEvent({ ...newEvent, date: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -158,7 +174,9 @@ const EventsPage = () => {
                     type="text"
                     placeholder="e.g., 9am to 5pm"
                     value={newEvent.time}
-                    onChange={(e) => setNewEvent({...newEvent, time: e.target.value})}
+                    onChange={(e) =>
+                      setNewEvent({ ...newEvent, time: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -168,7 +186,9 @@ const EventsPage = () => {
                 <input
                   type="text"
                   value={newEvent.location}
-                  onChange={(e) => setNewEvent({...newEvent, location: e.target.value})}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, location: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -177,7 +197,9 @@ const EventsPage = () => {
                 <input
                   type="text"
                   value={newEvent.organiser}
-                  onChange={(e) => setNewEvent({...newEvent, organiser: e.target.value})}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, organiser: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -187,7 +209,9 @@ const EventsPage = () => {
                   type="url"
                   placeholder="https://example.com/image.jpg"
                   value={newEvent.image}
-                  onChange={(e) => setNewEvent({...newEvent, image: e.target.value})}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, image: e.target.value })
+                  }
                 />
               </div>
               <div className="form-row">
@@ -197,7 +221,12 @@ const EventsPage = () => {
                     type="number"
                     min="0"
                     value={newEvent.slotsAvailable}
-                    onChange={(e) => setNewEvent({...newEvent, slotsAvailable: e.target.value})}
+                    onChange={(e) =>
+                      setNewEvent({
+                        ...newEvent,
+                        slotsAvailable: e.target.value,
+                      })
+                    }
                     required
                   />
                 </div>
@@ -207,21 +236,25 @@ const EventsPage = () => {
                     type="number"
                     min="0"
                     value={newEvent.totalSlots}
-                    onChange={(e) => setNewEvent({...newEvent, totalSlots: e.target.value})}
+                    onChange={(e) =>
+                      setNewEvent({ ...newEvent, totalSlots: e.target.value })
+                    }
                     required
                   />
                 </div>
               </div>
-              <button type="submit" className="submit-event-btn">Create Event</button>
+              <button type="submit" className="submit-event-btn">
+                Create Event
+              </button>
             </form>
           </div>
         </div>
       )}
-      
+
       <div className="events-grid">
-        {filteredEvents.map(event => (
-          <div 
-            key={event.id} 
+        {filteredEvents.map((event) => (
+          <div
+            key={event._id}
             className="event-preview-card"
             onClick={() => setSelectedEvent(event)}
           >
@@ -240,9 +273,9 @@ const EventsPage = () => {
       </div>
 
       {selectedEvent && (
-        <EventCard 
-          event={selectedEvent} 
-          onClose={() => setSelectedEvent(null)} 
+        <EventCard
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
         />
       )}
     </div>
