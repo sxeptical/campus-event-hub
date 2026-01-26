@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { formatDate } from "../utils";
+import API_URL from "../config";
 
 const EventCard = ({ event, onClose, onRegistered }) => {
   const [isApplying, setIsApplying] = useState(false);
@@ -28,7 +29,7 @@ const EventCard = ({ event, onClose, onRegistered }) => {
       const eventId = event._id || event.id;
 
       const checkResponse = await fetch(
-        `http://localhost:5050/registrations?userId=${userId}&eventId=${eventId}`,
+        `${API_URL}/registrations?userId=${userId}&eventId=${eventId}`,
       );
       const existingRegistrations = await checkResponse.json();
 
@@ -45,7 +46,7 @@ const EventCard = ({ event, onClose, onRegistered }) => {
         eventId: eventId,
       };
 
-      const response = await fetch("http://localhost:5050/registrations", {
+      const response = await fetch(`${API_URL}/registrations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

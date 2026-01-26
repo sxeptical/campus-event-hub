@@ -1,6 +1,7 @@
 import { NavLink, Link } from "react-router";
 import { useState, useEffect, useRef } from "react";
 import { formatDate } from "../utils";
+import API_URL from "../config";
 
 function NavBar() {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -19,7 +20,7 @@ function NavBar() {
         const user = JSON.parse(userString);
         const userId = user._id || user.id;
         const response = await fetch(
-          `http://localhost:5050/registrations?userId=${userId}`,
+          `${API_URL}/registrations?userId=${userId}`,
         );
         const registrations = await response.json();
 

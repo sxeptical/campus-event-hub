@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router";
 import { formatDate, getUser } from "../utils";
+import API_URL from "../config";
 
 const ManageEventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -28,9 +29,7 @@ const ManageEventsPage = () => {
   const fetchEvents = async () => {
     try {
       const userId = user._id || user.id;
-      const response = await fetch(
-        `http://localhost:5050/events?createdBy=${userId}`,
-      );
+      const response = await fetch(`${API_URL}/events?createdBy=${userId}`);
       const data = await response.json();
       setEvents(data.reverse());
     } catch (error) {
@@ -59,7 +58,7 @@ const ManageEventsPage = () => {
   const handleSave = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5050/events/${editingEvent._id || editingEvent.id}`,
+        `${API_URL}/events/${editingEvent._id || editingEvent.id}`,
         {
           method: "PUT",
           headers: {
@@ -95,7 +94,7 @@ const ManageEventsPage = () => {
     if (!confirmed) return;
 
     try {
-      await fetch(`http://localhost:5050/events/${eventId}`, {
+      await fetch(`${API_URL}/events/${eventId}`, {
         method: "DELETE",
       });
 

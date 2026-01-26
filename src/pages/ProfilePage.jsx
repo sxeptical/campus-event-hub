@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router";
 import { getUser } from "../utils";
+import API_URL from "../config";
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -32,7 +33,7 @@ const ProfilePage = () => {
         // If user has an ID, fetch latest data from server
         const userId = user._id || user.id;
         if (userId) {
-          const response = await fetch(`http://localhost:5050/users/${userId}`);
+          const response = await fetch(`${API_URL}/users/${userId}`);
           if (response.ok) {
             const data = await response.json();
             setProfile(data);
@@ -74,7 +75,7 @@ const ProfilePage = () => {
   const handleSave = async () => {
     try {
       const profileId = profile._id || profile.id;
-      const response = await fetch(`http://localhost:5050/users/${profileId}`, {
+      const response = await fetch(`${API_URL}/users/${profileId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

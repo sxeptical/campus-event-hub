@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router";
 import { formatDate, getUser } from "../utils";
+import API_URL from "../config";
 
 const DashboardPage = () => {
   const [registeredEvents, setRegisteredEvents] = useState([]);
@@ -24,9 +25,7 @@ const DashboardPage = () => {
 
       const user = JSON.parse(userString);
       const userId = user._id || user.id;
-      const response = await fetch(
-        `http://localhost:5050/registrations?userId=${userId}`,
-      );
+      const response = await fetch(`${API_URL}/registrations?userId=${userId}`);
       const registrations = await response.json();
 
       // Map registrations to event format for display
@@ -71,7 +70,7 @@ const DashboardPage = () => {
 
     try {
       // Delete registration
-      await fetch(`http://localhost:5050/registrations/${registrationId}`, {
+      await fetch(`${API_URL}/registrations/${registrationId}`, {
         method: "DELETE",
       });
 

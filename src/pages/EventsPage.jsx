@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import EventCard from "../components/EventCard";
 import { getUser } from "../utils";
+import API_URL from "../config";
 
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -27,7 +28,7 @@ const EventsPage = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch("http://localhost:5050/events");
+        const response = await fetch(`${API_URL}/events`);
         const data = await response.json();
         setEvents(data);
       } catch (error) {
@@ -66,7 +67,7 @@ const EventsPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5050/events", {
+      const response = await fetch(`${API_URL}/events`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

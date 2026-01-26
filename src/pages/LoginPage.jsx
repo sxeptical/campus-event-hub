@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import API_URL from "../config";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -39,9 +40,7 @@ const LoginPage = () => {
 
     try {
       // Query the users endpoint to find user by email
-      const response = await fetch(
-        `http://localhost:5050/users?email=${formData.email}`,
-      );
+      const response = await fetch(`${API_URL}/users?email=${formData.email}`);
 
       if (!response.ok) {
         throw new Error("Login failed");
